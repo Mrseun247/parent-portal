@@ -1,0 +1,2361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Accounting System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        h2 {
+            color: #444;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            border-bottom: 3px solid #ddd;
+            background: #f8f9fa;
+            border-radius: 8px 8px 0 0;
+            flex-wrap: wrap;
+            margin-bottom: 0;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            background: #e9ecef;
+            border: none;
+            margin-right: 2px;
+            font-weight: 600;
+            color: #555;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .tab:hover {
+            background: #dee2e6;
+            color: #333;
+            transform: translateY(-2px);
+        }
+
+        .tab.active {
+            background: #007bff;
+            color: white;
+            border-bottom: 3px solid #0056b3;
+        }
+
+        .tab-content {
+            display: none !important;
+            padding: 30px !important;
+            background: white !important;
+            border-radius: 0 0 8px 8px !important;
+            min-height: 400px !important;
+        }
+
+        .tab-content.active {
+            display: block !important;
+        }
+
+        /* Forms */
+        form {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+
+        /* Buttons */
+        button {
+            padding: 12px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Messages */
+        .error {
+            color: #dc3545;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .success {
+            color: #28a745;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .warning {
+            color: #ffc107;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .info {
+            color: #17a2b8;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Admin Info */
+        .admin-info {
+            background: linear-gradient(135deg, #e8f4f8 0%, #d1ecf1 100%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 5px solid #17a2b8;
+            font-weight: 500;
+        }
+
+        /* Dropdown Menu */
+        .tabs .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tabs .dropdown .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 220px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            z-index: 100;
+            border: 1px solid #dee2e6;
+            border-radius: 0 0 8px 8px;
+            top: 100%;
+            left: 0;
+        }
+
+        .tabs .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .tabs .dropdown .dropdown-content .tab {
+            display: block;
+            width: 100%;
+            text-align: left;
+            margin: 0;
+            border-radius: 0;
+            border: none;
+            background: white;
+            color: #333;
+            padding: 12px 20px;
+        }
+
+        .tabs .dropdown .dropdown-content .tab:hover {
+            background-color: #f8f9fa;
+        }
+
+        .tabs .dropdown .dropdown-content .tab.active,
+        .tabs .dropdown .dropbtn.active {
+            background: #007bff;
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                margin-right: 0;
+                margin-bottom: 2px;
+                text-align: center;
+                border-radius: 6px;
+            }
+
+            .tabs .dropdown {
+                position: static;
+            }
+
+            .tabs .dropdown .dropdown-content {
+                position: static;
+                display: block;
+                box-shadow: none;
+                border: none;
+                border-radius: 0;
+                background: #f8f9fa;
+                margin-top: 2px;
+            }
+
+            .tabs .dropdown .dropdown-content .tab {
+                background: #e9ecef;
+                margin-bottom: 2px;
+                border-radius: 6px;
+            }
+
+            #logout-btn {
+                margin-left: 0 !important;
+                margin-top: 5px;
+            }
+
+            input, select, button {
+                font-size: 16px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            /* Mobile table responsiveness */
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px 4px !important;
+            }
+
+            /* Stack form elements on mobile */
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            /* Mobile-friendly flex layouts */
+            div[style*="display: flex"] {
+                flex-direction: column !important;
+                gap: 10px !important;
+            }
+
+            div[style*="display: grid"] {
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .tab {
+                padding: 12px 15px;
+                font-size: 13px;
+            }
+
+            .tab-content {
+                padding: 20px !important;
+            }
+
+            /* Hide less important columns on very small screens */
+            .mobile-hide {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN / SIGNUP -->
+<div class="container" id="auth-section">
+    <h1>School Accounting System - Admin Login</h1>
+    
+    <form id="login-form">
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="login-email" required>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="login-password" required>
+        </div>
+        <div class="form-group">
+            <label>Admin Role</label>
+            <select id="admin-role" required>
+                <option value="">-- Select Role --</option>
+                <option value="finance_admin">Finance Admin</option>
+                <option value="registrar">Registrar</option>
+                <option value="accountant">Accountant</option>
+            </select>
+        </div>
+        <button type="submit">Login</button>
+        <button type="button" id="signup-btn">Sign Up</button>
+        <div id="login-message"></div>
+    </form>
+</div>
+
+<!-- MAIN APP -->
+<div class="container" id="app-section" style="display:none;">
+    <div class="admin-info">
+        <strong>Logged in as:</strong> <span id="admin-email">test@example.com</span> | 
+        <strong>Role:</strong> <span id="admin-role-display">SUPER ADMIN</span> | 
+        <strong>Session:</strong> <span id="session-time">12:00:00</span>
+    </div>
+    
+    <h1>School Accounting System</h1>
+    <div class="tabs">
+        <button class="tab active" data-tab="register-student">Register Student</button>
+        <button class="tab" data-tab="register-fee">Register Fee</button>
+        <button class="tab" data-tab="record-payment">Record Payment</button>
+        <div class="dropdown">
+            <button class="tab dropbtn">Reports</button>
+            <div class="dropdown-content">
+                <button class="tab" data-tab="search-student">Search Student</button>
+                <button class="tab" data-tab="generate-report">Generate Report</button>
+                <button class="tab" data-tab="fee-receipts">Fee Receipts</button>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="tab dropbtn">Management</button>
+            <div class="dropdown-content">
+                <button class="tab" data-tab="manage-fees">Manage Fees</button>
+            </div>
+        </div>
+        <button class="tab" id="logout-btn" style="margin-left:auto; background:#dc3545;">Logout</button>
+    </div>
+
+    <!-- REGISTER STUDENT -->
+    <div id="register-student" class="tab-content active">
+        <h2>Register Student</h2>
+        <form id="student-form">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="student-name" required>
+            </div>
+            <div class="form-group">
+                <label>Class</label>
+                <select id="student-class" required>
+                    <option value="">-- Select Class --</option>
+                    <option value="JSS1">JSS1</option>
+                    <option value="JSS2">JSS2</option>
+                    <option value="JSS3">JSS3</option>
+                    <option value="SSS1">SSS1</option>
+                    <option value="SSS2">SSS2</option>
+                    <option value="SSS3">SSS3</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Gender</label>
+                <select id="student-gender" required>
+                    <option value="">-- Select Gender --</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Parent/Guardian Name</label>
+                <input type="text" id="student-parent" required>
+            </div>
+            <div class="form-group">
+                <label>Parent/Guardian Phone</label>
+                <input type="tel" id="student-parent-phone" required>
+            </div>
+            <div class="form-group">
+                <label>Address</label>
+                <textarea id="student-address" rows="3"></textarea>
+            </div>
+            <button type="submit">Register Student</button>
+            <div id="student-message"></div>
+        </form>
+    </div>
+
+    <!-- MANAGE TERMS -->
+    <div id="manage-terms" class="tab-content">
+        <h2>Manage Academic Terms</h2>
+        <form id="term-form">
+            <div class="form-group">
+                <label>Term Name</label>
+                <input type="text" id="term-name" placeholder="e.g., First Term 2024" required>
+            </div>
+            <div class="form-group">
+                <label>Academic Year</label>
+                <input type="text" id="academic-year" placeholder="e.g., 2024/2025" required>
+            </div>
+            <div class="form-group">
+                <label>Start Date</label>
+                <input type="date" id="term-start-date" required>
+            </div>
+            <div class="form-group">
+                <label>End Date</label>
+                <input type="date" id="term-end-date" required>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select id="term-status" required>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+            <button type="submit">Add Term</button>
+            <div id="term-message"></div>
+        </form>
+        
+        <div style="overflow-x: auto; margin-top: 25px;">
+            <table style="width: 100%; border-collapse: collapse; background: white;">
+                <thead>
+                    <tr style="background: #f8f9fa;">
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Term Name</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Academic Year</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Start Date</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">End Date</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Status</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="terms-table-body">
+                    <tr>
+                        <td colspan="6" style="padding: 20px; text-align: center; color: #6c757d;">No terms found</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- REGISTER FEE -->
+    <div id="register-fee" class="tab-content">
+        <h2>Register Fee Structure</h2>
+        <form id="fee-form">
+            <div class="form-group">
+                <label>Select Term</label>
+                <select id="fee-term" required>
+                    <option value="">-- Select Term --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Class</label>
+                <select id="fee-class" required>
+                    <option value="">-- Select Class --</option>
+                    <option value="JSS1">JSS1</option>
+                    <option value="JSS2">JSS2</option>
+                    <option value="JSS3">JSS3</option>
+                    <option value="SSS1">SSS1</option>
+                    <option value="SSS2">SSS2</option>
+                    <option value="SSS3">SSS3</option>
+                </select>
+            </div>
+            <h3>Fee Breakdown</h3>
+            <div id="fee-items">
+                <div class="form-group">
+                    <label>Tuition</label>
+                    <input type="number" class="fee-input" data-fee-name="Tuition" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Uniform</label>
+                    <input type="number" class="fee-input" data-fee-name="Uniform" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Exam</label>
+                    <input type="number" class="fee-input" data-fee-name="Exam" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Club</label>
+                    <input type="number" class="fee-input" data-fee-name="Club" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Sports</label>
+                    <input type="number" class="fee-input" data-fee-name="Sports" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Library</label>
+                    <input type="number" class="fee-input" data-fee-name="Library" value="0" min="0">
+                </div>
+            </div>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <div class="form-group">
+                    <label><strong>Total Amount</strong></label>
+                    <input type="number" id="fee-total" value="0" readonly style="font-weight:bold; background:#e9ecef;">
+                </div>
+            </div>
+            <button type="submit">Register Fee Structure</button>
+            <div id="fee-message"></div>
+        </form>
+    </div>
+
+    <!-- RECORD PAYMENT -->
+    <div id="record-payment" class="tab-content">
+        <h2>Record Payment</h2>
+        <form id="payment-form">
+            <div style="display: flex; gap: 15px; align-items: flex-end; margin-bottom: 25px;">
+                <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                    <label>Student ID</label>
+                    <input type="text" id="payment-student-id" placeholder="Enter student ID" required>
+                </div>
+                <button type="button" id="load-student-fees" style="background: #28a745; white-space: nowrap;">Load Student</button>
+            </div>
+            
+            <div id="student-info" style="display:none; padding:15px; border-left:4px solid #17a2b8; background:#e8f4f8; margin-bottom:20px;">
+                <h4>Student Information</h4>
+                <p><strong>Name:</strong> <span id="student-name-display"></span></p>
+                <p><strong>Class:</strong> <span id="student-class-display"></span></p>
+                <p><strong>Parent:</strong> <span id="student-parent-display"></span></p>
+            </div>
+            
+            <div id="term-selection" style="display:none;">
+                <div class="form-group">
+                    <label>Select Term</label>
+                    <select id="payment-term-select" required>
+                        <option value="">-- Select Term --</option>
+                    </select>
+                </div>
+                <button type="button" id="load-term-fees" style="background: #28a745;">Load Term Fees</button>
+            </div>
+            
+            <div id="fees-section" style="display:none;">
+                <h3>Fee Structure for Selected Term</h3>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                        <span><strong>Total Fee Amount:</strong></span>
+                        <span id="total-fee-amount">₦0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                        <span><strong>Amount Paid:</strong></span>
+                        <span id="amount-paid">₦0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                        <span><strong>Outstanding Balance:</strong></span>
+                        <span id="outstanding-balance">₦0</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Payment Amount</label>
+                    <input type="number" id="payment-amount" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select id="payment-method" required>
+                        <option value="">-- Select Method --</option>
+                        <option value="cash">Cash</option>
+                        <option value="bank_transfer">Bank Transfer</option>
+                        <option value="cheque">Cheque</option>
+                        <option value="pos">POS</option>
+                        <option value="online">Online Payment</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Payment Date</label>
+                    <input type="date" id="payment-date" required>
+                </div>
+                <div class="form-group">
+                    <label>Reference Number (Optional)</label>
+                    <input type="text" id="payment-reference" placeholder="Transaction reference">
+                </div>
+                <div class="form-group">
+                    <label>Notes (Optional)</label>
+                    <textarea id="payment-notes" rows="2" placeholder="Additional notes"></textarea>
+                </div>
+            </div>
+            
+            <button type="submit" id="submit-payment" style="display:none;">Record Payment</button>
+            <div id="payment-message"></div>
+        </form>
+    </div>
+
+    <!-- SEARCH STUDENT -->
+    <div id="search-student" class="tab-content">
+        <h2>Search Student</h2>
+        <form id="search-form">
+            <div class="form-group">
+                <label>Search by Name, ID, or Parent Name</label>
+                <input type="text" id="search-query" placeholder="Enter search term" required>
+            </div>
+            <button type="submit">Search</button>
+        </form>
+        <div style="margin-top: 30px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9fa;">
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">ID</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Name</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Class</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Parent/Guardian</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Phone</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="search-results-body">
+                    <tr>
+                        <td colspan="6" style="padding: 20px; text-align: center; color: #6c757d;">Enter a search term and click Search</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- GENERATE REPORT -->
+    <div id="generate-report" class="tab-content">
+        <h2>Generate Financial Report</h2>
+        <form id="report-form">
+            <div class="form-group">
+                <label>Select Term</label>
+                <select id="report-term" required>
+                    <option value="">-- Select Term --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Report Type</label>
+                <select id="report-type" required>
+                    <option value="">-- Select Type --</option>
+                    <option value="payment_summary">Payment Summary</option>
+                    <option value="outstanding_fees">Outstanding Fees</option>
+                    <option value="class_summary">Class-wise Summary</option>
+                </select>
+            </div>
+            <button type="submit">Generate Report</button>
+        </form>
+        <div style="overflow-x: auto; margin-top: 25px;">
+            <table style="width: 100%; border-collapse: collapse; background: white;">
+                <thead>
+                    <tr style="background: #f8f9fa;">
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Student ID</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Name</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Class</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Total Fee</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Amount Paid</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Balance</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="report-results-body">
+                    <tr>
+                        <td colspan="7" style="padding: 20px; text-align: center; color: #6c757d;">Select term and report type, then click Generate Report</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- FEE RECEIPTS -->
+    <div id="fee-receipts" class="tab-content">
+        <h2>Generate Student Receipt</h2>
+        <form id="receipt-form">
+            <div class="form-group">
+                <label>Student ID</label>
+                <input type="text" id="receipt-student-id" placeholder="Enter student ID" required>
+            </div>
+            <div class="form-group">
+                <label>Select Term</label>
+                <select id="receipt-term" required>
+                    <option value="">-- Select Term --</option>
+                </select>
+            </div>
+            <button type="submit">Generate Receipt</button>
+        </form>
+        
+        <div id="receipt-display" style="display:none; margin-top: 30px;">
+            <div id="receipt-content" style="background: white; padding: 30px; border: 2px solid #dee2e6; border-radius: 8px;">
+                <!-- Receipt content will be generated here -->
+            </div>
+        </div>
+        <div id="receipt-message"></div>
+    </div>
+
+    <!-- MANAGE FEES -->
+    <div id="manage-fees" class="tab-content">
+        <h2>💰 Fee Management</h2>
+        
+        <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #28a745;">
+            <strong>ℹ️ Info:</strong> Finance Admins can manage individual fees and fee structures. Add new fees, edit existing ones, or manage complete fee structures by term and class.
+        </div>
+        
+        <!-- Individual Fee Management -->
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #dee2e6;">
+            <h3>📝 Add Individual Fee</h3>
+            <form id="individual-fee-form">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label>Fee Name</label>
+                        <input type="text" id="individual-fee-name" placeholder="e.g., Tuition Fee, Library Fee" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Fee Amount (₦)</label>
+                        <input type="number" id="individual-fee-amount" placeholder="e.g., 50000" min="0" step="100" required>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label>Term</label>
+                        <select id="individual-fee-term" required>
+                            <option value="">-- Select Term --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Class</label>
+                        <select id="individual-fee-class" required>
+                            <option value="">-- Select Class --</option>
+                            <option value="JSS 1">JSS 1</option>
+                            <option value="JSS 2">JSS 2</option>
+                            <option value="JSS 3">JSS 3</option>
+                            <option value="SS 1">SS 1</option>
+                            <option value="SS 2">SS 2</option>
+                            <option value="SS 3">SS 3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="individual-fee-category" required>
+                            <option value="">-- Select Category --</option>
+                            <option value="tuition">Tuition</option>
+                            <option value="development">Development</option>
+                            <option value="library">Library</option>
+                            <option value="sports">Sports</option>
+                            <option value="laboratory">Laboratory</option>
+                            <option value="examination">Examination</option>
+                            <option value="miscellaneous">Miscellaneous</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit">➕ Add Fee</button>
+                <div id="individual-fee-message"></div>
+            </form>
+        </div>
+        
+        <!-- Fee List Management -->
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #dee2e6;">
+            <h3>📋 Manage Existing Fees</h3>
+            <div style="margin-bottom: 20px;">
+                <button onclick="loadIndividualFeesList()" style="background: #17a2b8;">🔄 Refresh Fees</button>
+                <button onclick="exportIndividualFeesData()" style="background: #28a745;">📥 Export Fees</button>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; background: white;">
+                    <thead>
+                        <tr style="background: #f8f9fa;">
+                            <th style="padding: 12px; border: 1px solid #dee2e6;">Fee Name</th>
+                            <th style="padding: 12px; border: 1px solid #dee2e6;">Amount (₦)</th>
+                            <th style="padding: 12px; border: 1px solid #dee2e6;">Term</th>
+                            <th style="padding: 12px; border: 1px solid #dee2e6;">Class</th>
+                            <th style="padding: 12px; border: 1px solid #dee2e6;">Category</th>
+                            <th style="padding: 12px; border: 1px solid #dee2e6;">Status</th>
+                            <th style="padding: 12px; border: 1px solid #dee2e6;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="individual-fees-table-body">
+                        <tr>
+                            <td colspan="7" style="padding: 20px; text-align: center; color: #6c757d;">Loading fees...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Legacy Fee Structure Management -->
+        <div style="background: #fff3cd; padding: 20px; border-radius: 8px; border: 1px solid #ffeaa7;">
+            <h3>⚙️ Legacy Fee Structure Management</h3>
+            <p style="margin-bottom: 15px; color: #856404;"><strong>Note:</strong> This section manages complete fee structures by term and class (legacy system).</p>
+            
+            <form id="manage-fee-form">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label>Select Term</label>
+                        <select id="manage-fee-term" required>
+                            <option value="">-- Select Term --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Class</label>
+                        <select id="manage-fee-class" required>
+                            <option value="">-- Select Class --</option>
+                            <option value="JSS1">JSS1</option>
+                            <option value="JSS2">JSS2</option>
+                            <option value="JSS3">JSS3</option>
+                            <option value="SSS1">SSS1</option>
+                            <option value="SSS2">SSS2</option>
+                            <option value="SSS3">SSS3</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="button" id="load-fee-structure">Load Fee Structure</button>
+                <div id="manage-fee-message"></div>
+            </form>
+            
+            <div id="fee-structure-editor" style="display:none; margin-top: 30px;">
+                <h4>Edit Fee Structure</h4>
+                <form id="update-fee-form">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label>Tuition</label>
+                            <input type="number" class="manage-fee-input" data-fee-name="Tuition" value="0" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Uniform</label>
+                            <input type="number" class="manage-fee-input" data-fee-name="Uniform" value="0" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Exam</label>
+                            <input type="number" class="manage-fee-input" data-fee-name="Exam" value="0" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Sports</label>
+                            <input type="number" class="manage-fee-input" data-fee-name="Sports" value="0" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Library</label>
+                            <input type="number" class="manage-fee-input" data-fee-name="Library" value="0" min="0">
+                        </div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                        <div class="form-group">
+                            <label><strong>Total Amount</strong></label>
+                            <input type="number" id="manage-fee-total" value="0" readonly style="font-weight:bold; background:#e9ecef;">
+                        </div>
+                    </div>
+                    <button type="submit">Update Fee Structure</button>
+                </form>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+
+    <!-- ADMIN MANAGEMENT -->
+    <div id="admin-management" class="tab-content">
+        <h2>Admin Management</h2>
+        <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
+            <strong>Note:</strong> Only Super Admins can manage other administrators.
+        </div>
+        
+        <form id="admin-form">
+            <div class="form-group">
+                <label>Admin Email</label>
+                <input type="email" id="admin-email-input" required>
+            </div>
+            <div class="form-group">
+                <label>Admin Role</label>
+                <select id="admin-role-input" required>
+                    <option value="">-- Select Role --</option>
+                    <option value="finance_admin">Finance Admin</option>
+                    <option value="registrar">Registrar</option>
+                    <option value="accountant">Accountant</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="admin-fullname" required>
+            </div>
+            <button type="submit">Add Admin</button>
+            <div id="admin-form-message"></div>
+        </form>
+        
+        <div style="overflow-x: auto; margin-top: 25px;">
+            <table style="width: 100%; border-collapse: collapse; background: white;">
+                <thead>
+                    <tr style="background: #f8f9fa;">
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Email</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Full Name</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Role</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Status</th>
+                        <th style="padding: 12px; border: 1px solid #dee2e6;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="admins-table-body">
+                    <tr>
+                        <td colspan="5" style="padding: 20px; text-align: center; color: #6c757d;">No administrators found</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+// School Accounting System - Clean ES5 Version
+console.log('School Accounting System JavaScript loaded successfully');
+
+// Global variables
+var scriptURL = 'https://script.google.com/macros/s/AKfycbxR2e44gYoXELURFHfN98Y8mkD18DFVIZgM0ocGW6vxXW3ta6OW3hwgv2Yo8aA_qX7C/exec';
+var currentAdmin = null;
+
+// Initialize app when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing app...');
+    
+    // Check for saved login
+    checkSavedLogin();
+    
+    // Add login form handler
+    var loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
+    
+    // Add signup button handler
+    var signupBtn = document.getElementById('signup-btn');
+    if (signupBtn) {
+        signupBtn.addEventListener('click', handleSignup);
+    }
+    
+    // Initialize tab switching if logged in
+    if (currentAdmin) {
+        initializeTabs();
+        updateSessionTime();
+        setInterval(updateSessionTime, 60000);
+    }
+});
+
+// Check for saved login
+function checkSavedLogin() {
+    var savedAdmin = localStorage.getItem('currentAdmin');
+    if (savedAdmin) {
+        try {
+            currentAdmin = JSON.parse(savedAdmin);
+            showApp();
+        } catch (e) {
+            localStorage.removeItem('currentAdmin');
+            showLogin();
+        }
+    } else {
+        showLogin();
+    }
+}
+
+// Show login screen
+function showLogin() {
+    document.getElementById('auth-section').style.display = 'block';
+    document.getElementById('app-section').style.display = 'none';
+}
+
+// Show main app
+function showApp() {
+    document.getElementById('auth-section').style.display = 'none';
+    document.getElementById('app-section').style.display = 'block';
+    
+    // Update admin info display
+    if (currentAdmin) {
+        document.getElementById('admin-email').textContent = currentAdmin.email;
+        document.getElementById('admin-role-display').textContent = currentAdmin.role.replace('_', ' ').toUpperCase();
+    }
+    
+    // Initialize app functionality
+    initializeTabs();
+    updateSessionTime();
+    setInterval(updateSessionTime, 60000);
+    
+    // Apply role-based access control
+    applyRoleBasedUI();
+    
+    // Initialize individual fee management
+    loadTermsForIndividualFees();
+    loadIndividualFeesList();
+}
+
+// Handle login
+function handleLogin(e) {
+    e.preventDefault();
+    console.log('Login form submitted');
+    
+    var email = document.getElementById('login-email').value.trim();
+    var password = document.getElementById('login-password').value;
+    var role = document.getElementById('admin-role').value;
+    var msg = document.getElementById('login-message');
+    
+    console.log('Login attempt:', {email: email, password: password ? '***' : 'empty', role: role});
+    
+    // Validate inputs
+    if (!email || !password || !role) {
+        msg.className = 'error';
+        msg.textContent = 'Please fill all fields';
+        return;
+    }
+    
+    // Show loading message
+    msg.className = 'info';
+    msg.textContent = 'Logging in...';
+    
+    // Test credentials (hardcoded for testing)
+    var testCredentials = {
+        'finance@school.com': {
+            password: 'finance123',
+            roles: ['finance_admin'],
+            fullName: 'Finance Manager'
+        },
+        'registrar@school.com': {
+            password: 'registrar123',
+            roles: ['registrar'],
+            fullName: 'School Registrar'
+        },
+        'accountant@school.com': {
+            password: 'accountant123',
+            roles: ['accountant'],
+            fullName: 'School Accountant'
+        }
+    };
+    
+    console.log('Available test accounts:', Object.keys(testCredentials));
+    console.log('Checking credentials for:', email);
+    
+    // Simple credential check
+    if (testCredentials[email]) {
+        console.log('Email found in test credentials');
+        console.log('Password match:', testCredentials[email].password === password);
+        console.log('Available roles:', testCredentials[email].roles);
+        console.log('Role match:', testCredentials[email].roles.indexOf(role) !== -1);
+        
+        if (testCredentials[email].password === password && 
+            testCredentials[email].roles.indexOf(role) !== -1) {
+            
+            console.log('Test credentials matched!');
+            
+            // Successful login
+            currentAdmin = {
+                email: email,
+                role: role,
+                fullName: testCredentials[email].fullName
+            };
+            
+            localStorage.setItem('currentAdmin', JSON.stringify(currentAdmin));
+            msg.className = 'success';
+            msg.textContent = 'Login successful!';
+            
+            setTimeout(function() {
+                showApp();
+            }, 1000);
+            return;
+        } else {
+            console.log('Test credentials failed - wrong password or role');
+            msg.className = 'error';
+            msg.textContent = 'Wrong password or role for ' + email + '. Try: admin@school.com / admin123 / Super Admin';
+            return;
+        }
+    } else {
+        console.log('Email not found in test credentials, trying backend...');
+    }
+    
+    // Try backend login if available
+    console.log('Attempting backend login...');
+    makeJsonpRequest({
+        action: 'loginAdmin',
+        email: email,
+        password: password,
+        role: role
+    }, function(res) {
+        console.log('Backend login response:', res);
+        if (res.success) {
+            currentAdmin = {
+                email: email,
+                role: role,
+                fullName: res.fullName || email
+            };
+            localStorage.setItem('currentAdmin', JSON.stringify(currentAdmin));
+            msg.className = 'success';
+            msg.textContent = 'Login successful!';
+            
+            setTimeout(function() {
+                showApp();
+            }, 1000);
+        } else {
+            msg.className = 'error';
+            msg.textContent = 'Backend login failed. Try test credentials: admin@school.com / admin123 / Super Admin or use Bypass Login.';
+        }
+    });
+}
+
+// Handle signup
+function handleSignup() {
+    var email = document.getElementById('login-email').value;
+    var password = document.getElementById('login-password').value;
+    var role = document.getElementById('admin-role').value;
+    var msg = document.getElementById('login-message');
+    
+    if (!email || !password || !role) {
+        msg.className = 'error';
+        msg.textContent = 'Please fill all fields';
+        return;
+    }
+    
+    // Validate email format
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        msg.className = 'error';
+        msg.textContent = 'Please enter a valid email address';
+        return;
+    }
+    
+    // Validate password strength
+    if (password.length < 6) {
+        msg.className = 'error';
+        msg.textContent = 'Password must be at least 6 characters long';
+        return;
+    }
+    
+    // Show loading message
+    msg.className = 'info';
+    msg.textContent = 'Creating admin account...';
+    
+    // Make request to backend
+    makeJsonpRequest({
+        action: 'signupAdmin',
+        email: email,
+        password: password,
+        role: role,
+        fullName: email.split('@')[0] // Use email prefix as default name
+    }, function(res) {
+        console.log('Signup response:', res);
+        
+        if (res.success) {
+            msg.className = 'success';
+            msg.textContent = 'Admin account created successfully! You can now login.';
+            
+            // Clear the form
+            document.getElementById('login-email').value = '';
+            document.getElementById('login-password').value = '';
+            document.getElementById('admin-role').value = '';
+        } else {
+            msg.className = 'error';
+            msg.textContent = res.message || 'Error creating admin account. Try test credentials: admin@school.com / admin123';
+        }
+    });
+}
+
+// JSONP Helper with improved error handling
+function makeJsonpRequest(params, callback) {
+    var cbName = 'jsonp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    var timeoutId;
+    
+    window[cbName] = function(data) { 
+        clearTimeout(timeoutId);
+        callback(data); 
+        delete window[cbName];
+        
+        // Clean up script tag
+        var script = document.querySelector('script[src*="' + cbName + '"]');
+        if (script && document.head.contains(script)) {
+            document.head.removeChild(script);
+        }
+    };
+    
+    var url = new URL(scriptURL);
+    for (var key in params) {
+        if (params.hasOwnProperty(key)) {
+            url.searchParams.append(key, params[key]);
+        }
+    }
+    url.searchParams.append('callback', cbName);
+    
+    var script = document.createElement('script'); 
+    script.src = url;
+    script.onerror = function() {
+        clearTimeout(timeoutId);
+        callback({
+            success: false, 
+            message: 'Backend connection failed. Please check your Google Apps Script URL or use test credentials.'
+        });
+        delete window[cbName];
+        if (document.head.contains(script)) {
+            document.head.removeChild(script);
+        }
+    };
+    
+    document.head.appendChild(script);
+    
+    // Set timeout for request
+    timeoutId = setTimeout(function() {
+        callback({
+            success: false, 
+            message: 'Request timeout. Backend may be unavailable. Try test credentials.'
+        });
+        delete window[cbName];
+        if (document.head.contains(script)) {
+            document.head.removeChild(script);
+        }
+    }, 15000); // 15 second timeout
+}
+
+// Initialize tab functionality
+function initializeTabs() {
+    console.log('Initializing tabs...');
+    
+    // Make sure the first tab is active
+    var firstTab = document.querySelector('.tab[data-tab="register-student"]');
+    var firstContent = document.getElementById('register-student');
+    
+    if (firstTab && firstContent) {
+        firstTab.classList.add('active');
+        firstContent.classList.add('active');
+    }
+    
+    // Add event listeners to all tabs
+    var tabs = document.querySelectorAll('.tab[data-tab]');
+    for (var i = 0; i < tabs.length; i++) {
+        var tab = tabs[i];
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+            var clickedTabName = this.dataset.tab;
+            
+            // Deactivate all tabs and content
+            var allTabs = document.querySelectorAll('.tab');
+            for (var j = 0; j < allTabs.length; j++) {
+                allTabs[j].classList.remove('active');
+            }
+            var allContent = document.querySelectorAll('.tab-content');
+            for (var k = 0; k < allContent.length; k++) {
+                allContent[k].classList.remove('active');
+            }
+            
+            // Activate clicked tab and its content
+            this.classList.add('active');
+            var targetContent = document.getElementById(clickedTabName);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+            
+            // Handle dropdown parent
+            var dropdown = this.closest('.dropdown');
+            if (dropdown) {
+                var dropbtn = dropdown.querySelector('.dropbtn');
+                if (dropbtn) {
+                    dropbtn.classList.add('active');
+                }
+            }
+        });
+    }
+    
+    // Logout button
+    var logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function() {
+            localStorage.removeItem('currentAdmin');
+            location.reload();
+        });
+    }
+    
+    // Student form
+    var studentForm = document.getElementById('student-form');
+    if (studentForm) {
+        studentForm.addEventListener('submit', handleStudentSubmit);
+    }
+    
+    // Term form
+    var termForm = document.getElementById('term-form');
+    if (termForm) {
+        termForm.addEventListener('submit', handleTermSubmit);
+    }
+    
+    // Fee form
+    var feeForm = document.getElementById('fee-form');
+    if (feeForm) {
+        feeForm.addEventListener('submit', handleFeeSubmit);
+    }
+    
+    // Payment form
+    var paymentForm = document.getElementById('payment-form');
+    if (paymentForm) {
+        paymentForm.addEventListener('submit', handlePaymentSubmit);
+    }
+    
+    // Search form
+    var searchForm = document.getElementById('search-form');
+    if (searchForm) {
+        searchForm.addEventListener('submit', handleSearchSubmit);
+    }
+    
+    // Report form
+    var reportForm = document.getElementById('report-form');
+    if (reportForm) {
+        reportForm.addEventListener('submit', handleReportSubmit);
+    }
+    
+    // Receipt form
+    var receiptForm = document.getElementById('receipt-form');
+    if (receiptForm) {
+        receiptForm.addEventListener('submit', handleReceiptSubmit);
+    }
+    
+    // Admin form
+    var adminForm = document.getElementById('admin-form');
+    if (adminForm) {
+        adminForm.addEventListener('submit', handleAdminSubmit);
+    }
+    
+    // Manage fee form
+    var loadFeeStructureBtn = document.getElementById('load-fee-structure');
+    if (loadFeeStructureBtn) {
+        loadFeeStructureBtn.addEventListener('click', handleLoadFeeStructure);
+    }
+    
+    // Update fee form
+    var updateFeeForm = document.getElementById('update-fee-form');
+    if (updateFeeForm) {
+        updateFeeForm.addEventListener('submit', handleUpdateFeeStructure);
+    }
+    
+    var individualFeeForm = document.getElementById('individual-fee-form');
+    if (individualFeeForm) {
+        individualFeeForm.addEventListener('submit', handleIndividualFeeSubmit);
+    }
+    
+    // Manage fee calculation
+    var manageFeeInputs = document.querySelectorAll('.manage-fee-input');
+    for (var i = 0; i < manageFeeInputs.length; i++) {
+        manageFeeInputs[i].addEventListener('input', calculateManageFeeTotal);
+    }
+    
+    // Load student button
+    var loadStudentBtn = document.getElementById('load-student-fees');
+    if (loadStudentBtn) {
+        loadStudentBtn.addEventListener('click', handleLoadStudent);
+    }
+    
+    // Load term fees button
+    var loadTermFeesBtn = document.getElementById('load-term-fees');
+    if (loadTermFeesBtn) {
+        loadTermFeesBtn.addEventListener('click', handleLoadTermFees);
+    }
+    
+    // Fee calculation
+    var feeInputs = document.querySelectorAll('.fee-input');
+    for (var i = 0; i < feeInputs.length; i++) {
+        feeInputs[i].addEventListener('input', calculateFeeTotal);
+    }
+    
+    // Set today's date for payment
+    var paymentDateInput = document.getElementById('payment-date');
+    if (paymentDateInput) {
+        paymentDateInput.value = new Date().toISOString().split('T')[0];
+    }
+    
+    // Load terms into dropdowns when app starts
+    loadTermsIntoDropdowns();
+    
+    // Load terms table on startup
+    loadTermsTable();
+    
+    // Load admins list on startup
+    loadAdminsList();
+    
+    // Load terms into manage fee dropdown
+    loadTermsIntoSelect('manage-fee-term');
+}
+
+// Update session time display
+function updateSessionTime() {
+    var sessionTimeElement = document.getElementById('session-time');
+    if (sessionTimeElement) {
+        var now = new Date();
+        sessionTimeElement.textContent = now.toLocaleTimeString();
+    }
+}
+
+// Handle student form submission
+function handleStudentSubmit(e) {
+    e.preventDefault();
+    
+    if (!canAccessFeature('register-student')) {
+        showPermissionDenied('register-student');
+        return;
+    }
+    
+    console.log('Student form submitted');
+    
+    var formData = {
+        action: 'addStudent',
+        name: document.getElementById('student-name').value,
+        class: document.getElementById('student-class').value,
+        gender: document.getElementById('student-gender').value,
+        parentName: document.getElementById('student-parent').value,
+        parentPhone: document.getElementById('student-parent-phone').value,
+        address: document.getElementById('student-address').value
+    };
+    
+    makeJsonpRequest(formData, function(res) {
+        var msg = document.getElementById('student-message');
+        if (res.success) {
+            msg.className = 'success';
+            msg.textContent = 'Student registered successfully! Student ID: ' + res.studentID;
+            e.target.reset();
+        } else {
+            msg.className = 'error';
+            msg.textContent = res.message || 'Error registering student';
+        }
+    });
+}
+
+// Handle term form submission
+function handleTermSubmit(e) {
+    e.preventDefault();
+    
+    if (!canAccessFeature('manage-terms')) {
+        showPermissionDenied('manage-terms');
+        return;
+    }
+    
+    console.log('Term form submitted');
+    
+    var formData = {
+        action: 'addTerm',
+        name: document.getElementById('term-name').value,
+        academicYear: document.getElementById('academic-year').value,
+        startDate: document.getElementById('term-start-date').value,
+        endDate: document.getElementById('term-end-date').value,
+        status: document.getElementById('term-status').value
+    };
+    
+    makeJsonpRequest(formData, function(res) {
+        var msg = document.getElementById('term-message');
+        if (res.success) {
+            msg.className = 'success';
+            msg.textContent = 'Term added successfully!';
+            e.target.reset();
+            loadTermsTable();
+            loadTermsIntoDropdowns();
+        } else {
+            msg.className = 'error';
+            msg.textContent = res.message || 'Error adding term';
+        }
+    });
+}
+
+// Handle fee form submission
+function handleFeeSubmit(e) {
+    e.preventDefault();
+    
+    if (!canAccessFeature('register-fee')) {
+        showPermissionDenied('register-fee');
+        return;
+    }
+    
+    console.log('Fee form submitted');
+    
+    var formData = {
+        action: 'addFee',
+        term: document.getElementById('fee-term').value,
+        class: document.getElementById('fee-class').value,
+        total: document.getElementById('fee-total').value
+    };
+    
+    // Add individual fee items
+    var feeInputs = document.querySelectorAll('.fee-input');
+    for (var i = 0; i < feeInputs.length; i++) {
+        var input = feeInputs[i];
+        var feeName = input.getAttribute('data-fee-name');
+        formData[feeName] = input.value || '0';
+    }
+    
+    makeJsonpRequest(formData, function(res) {
+        var msg = document.getElementById('fee-message');
+        if (res.success) {
+            msg.className = 'success';
+            msg.textContent = 'Fee structure registered successfully!';
+            e.target.reset();
+            calculateFeeTotal();
+        } else {
+            msg.className = 'error';
+            msg.textContent = res.message || 'Error registering fee structure';
+        }
+    });
+}
+
+// Handle payment form submission
+function handlePaymentSubmit(e) {
+    e.preventDefault();
+    
+    if (!canAccessFeature('record-payment')) {
+        showPermissionDenied('record-payment');
+        return;
+    }
+    
+    console.log('Payment form submitted');
+    
+    var formData = {
+        action: 'addPayment',
+        studentID: document.getElementById('payment-student-id').value,
+        termId: document.getElementById('payment-term-select').value,
+        amount: document.getElementById('payment-amount').value,
+        paymentMethod: document.getElementById('payment-method').value,
+        date: document.getElementById('payment-date').value,
+        reference: document.getElementById('payment-reference').value,
+        notes: document.getElementById('payment-notes').value
+    };
+    
+    makeJsonpRequest(formData, function(res) {
+        var msg = document.getElementById('payment-message');
+        if (res.success) {
+            msg.className = 'success';
+            msg.textContent = 'Payment recorded successfully! Receipt ID: ' + res.receiptId;
+            e.target.reset();
+            document.getElementById('student-info').style.display = 'none';
+            document.getElementById('term-selection').style.display = 'none';
+            document.getElementById('fees-section').style.display = 'none';
+            document.getElementById('submit-payment').style.display = 'none';
+        } else {
+            msg.className = 'error';
+            msg.textContent = res.message || 'Error recording payment';
+        }
+    });
+}
+
+// Handle search form submission
+function handleSearchSubmit(e) {
+    e.preventDefault();
+    console.log('Search form submitted');
+    
+    var query = document.getElementById('search-query').value.trim();
+    if (!query) {
+        return;
+    }
+    
+    var formData = {
+        action: 'searchStudent',
+        query: query
+    };
+    
+    makeJsonpRequest(formData, function(res) {
+        var tbody = document.getElementById('search-results-body');
+        tbody.innerHTML = '';
+        
+        if (res.success && res.students && res.students.length > 0) {
+            for (var i = 0; i < res.students.length; i++) {
+                var student = res.students[i];
+                var row = document.createElement('tr');
+                row.innerHTML = 
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + student.id + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + student.name + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + student.class + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + student.parentName + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + (student.parentPhone || '') + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' +
+                        '<button onclick="viewStudentDetails(\'' + student.id + '\')" style="background: #17a2b8; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin: 2px;">View</button>' +
+                    '</td>';
+                tbody.appendChild(row);
+            }
+        } else {
+            var row = document.createElement('tr');
+            row.innerHTML = '<td colspan="6" style="padding: 20px; text-align: center; color: #6c757d;">No students found</td>';
+            tbody.appendChild(row);
+        }
+    });
+}
+
+// Handle report form submission
+function handleReportSubmit(e) {
+    e.preventDefault();
+    console.log('Report form submitted');
+    
+    var formData = {
+        action: 'getReport',
+        termId: document.getElementById('report-term').value,
+        reportType: document.getElementById('report-type').value
+    };
+    
+    makeJsonpRequest(formData, function(res) {
+        var tbody = document.getElementById('report-results-body');
+        tbody.innerHTML = '';
+        
+        if (res.success && res.data && res.data.length > 0) {
+            for (var i = 0; i < res.data.length; i++) {
+                var item = res.data[i];
+                var balance = item.totalFee - item.amountPaid;
+                var status = balance <= 0 ? 'Paid' : 'Outstanding';
+                var statusColor = balance <= 0 ? '#28a745' : '#dc3545';
+                
+                var row = document.createElement('tr');
+                row.innerHTML = 
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + item.studentID + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + item.name + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + item.class + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">₦' + item.totalFee.toLocaleString() + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">₦' + item.amountPaid.toLocaleString() + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">₦' + balance.toLocaleString() + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6; color: ' + statusColor + '; font-weight: bold;">' + status + '</td>';
+                tbody.appendChild(row);
+            }
+        } else {
+            var row = document.createElement('tr');
+            row.innerHTML = '<td colspan="7" style="padding: 20px; text-align: center; color: #6c757d;">No data found</td>';
+            tbody.appendChild(row);
+        }
+    });
+}
+
+// Handle receipt form submission
+function handleReceiptSubmit(e) {
+    e.preventDefault();
+    console.log('Receipt form submitted');
+    
+    var formData = {
+        action: 'generateFeeReceipt',
+        studentID: document.getElementById('receipt-student-id').value,
+        termId: document.getElementById('receipt-term').value
+    };
+    
+    makeJsonpRequest(formData, function(res) {
+        var msg = document.getElementById('receipt-message');
+        var display = document.getElementById('receipt-display');
+        var content = document.getElementById('receipt-content');
+        
+        if (res.success && res.data) {
+            var data = res.data;
+            var balance = data.feeStructure.total - data.amountPaid;
+            
+            content.innerHTML = 
+                '<div style="text-align: center; margin-bottom: 30px;">' +
+                    '<h2 style="color: #007bff; margin: 0;">School Fee Receipt</h2>' +
+                    '<p style="margin: 5px 0; color: #666;">Academic Term: ' + data.term.name + ' (' + data.term.academicYear + ')</p>' +
+                '</div>' +
+                '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">' +
+                    '<div>' +
+                        '<h4 style="color: #333; margin-bottom: 10px;">Student Information</h4>' +
+                        '<p><strong>ID:</strong> ' + data.student.id + '</p>' +
+                        '<p><strong>Name:</strong> ' + data.student.name + '</p>' +
+                        '<p><strong>Class:</strong> ' + data.student.class + '</p>' +
+                        '<p><strong>Parent:</strong> ' + data.student.parentName + '</p>' +
+                    '</div>' +
+                    '<div>' +
+                        '<h4 style="color: #333; margin-bottom: 10px;">Payment Summary</h4>' +
+                        '<p><strong>Total Fee:</strong> ₦' + data.feeStructure.total.toLocaleString() + '</p>' +
+                        '<p><strong>Amount Paid:</strong> ₦' + data.amountPaid.toLocaleString() + '</p>' +
+                        '<p><strong>Balance:</strong> ₦' + balance.toLocaleString() + '</p>' +
+                        '<p><strong>Status:</strong> <span style="color: ' + (balance <= 0 ? '#28a745' : '#dc3545') + ';">' + (balance <= 0 ? 'Fully Paid' : 'Outstanding') + '</span></p>' +
+                    '</div>' +
+                '</div>' +
+                '<div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #dee2e6;">' +
+                    '<p style="margin: 0; color: #666;">Generated on ' + new Date().toLocaleDateString() + '</p>' +
+                '</div>';
+            
+            display.style.display = 'block';
+            msg.className = 'success';
+            msg.textContent = 'Receipt generated successfully!';
+        } else {
+            msg.className = 'error';
+            msg.textContent = res.message || 'Error generating receipt';
+            display.style.display = 'none';
+        }
+    });
+}
+
+// Load student details
+function handleLoadStudent() {
+    var studentId = document.getElementById('payment-student-id').value.trim();
+    if (!studentId) {
+        return;
+    }
+    
+    var formData = {
+        action: 'getStudent',
+        studentID: studentId
+    };
+    
+    makeJsonpRequest(formData, function(res) {
+        var studentInfo = document.getElementById('student-info');
+        var termSelection = document.getElementById('term-selection');
+        
+        if (res.success && res.student) {
+            var student = res.student;
+            document.getElementById('student-name-display').textContent = student.name;
+            document.getElementById('student-class-display').textContent = student.class;
+            document.getElementById('student-parent-display').textContent = student.parentName;
+            
+            studentInfo.style.display = 'block';
+            termSelection.style.display = 'block';
+            
+            // Load terms into payment term select
+            loadTermsIntoSelect('payment-term-select');
+        } else {
+            studentInfo.style.display = 'none';
+            termSelection.style.display = 'none';
+            alert('Student not found: ' + (res.message || 'Unknown error'));
+        }
+    });
+}
+
+// Load term fees
+function handleLoadTermFees() {
+    var studentId = document.getElementById('payment-student-id').value;
+    var termId = document.getElementById('payment-term-select').value;
+    
+    if (!studentId || !termId) {
+        return;
+    }
+    
+    var formData = {
+        action: 'getStudentTermFees',
+        studentID: studentId,
+        termId: termId
+    };
+    
+    makeJsonpRequest(formData, function(res) {
+        var feesSection = document.getElementById('fees-section');
+        var submitBtn = document.getElementById('submit-payment');
+        
+        if (res.success && res.feeStructure) {
+            var totalFee = res.feeStructure.total;
+            var amountPaid = res.amountPaid || 0;
+            var balance = totalFee - amountPaid;
+            
+            document.getElementById('total-fee-amount').textContent = '₦' + totalFee.toLocaleString();
+            document.getElementById('amount-paid').textContent = '₦' + amountPaid.toLocaleString();
+            document.getElementById('outstanding-balance').textContent = '₦' + balance.toLocaleString();
+            
+            feesSection.style.display = 'block';
+            submitBtn.style.display = 'block';
+        } else {
+            feesSection.style.display = 'none';
+            submitBtn.style.display = 'none';
+            alert('Fee structure not found: ' + (res.message || 'Unknown error'));
+        }
+    });
+}
+
+// Calculate fee total
+function calculateFeeTotal() {
+    var total = 0;
+    var feeInputs = document.querySelectorAll('.fee-input');
+    
+    for (var i = 0; i < feeInputs.length; i++) {
+        var value = parseFloat(feeInputs[i].value) || 0;
+        total += value;
+    }
+    
+    var totalInput = document.getElementById('fee-total');
+    if (totalInput) {
+        totalInput.value = total;
+    }
+}
+
+// Load terms into dropdowns
+function loadTermsIntoDropdowns() {
+    var selects = ['fee-term', 'payment-term-select', 'report-term', 'receipt-term'];
+    
+    for (var i = 0; i < selects.length; i++) {
+        loadTermsIntoSelect(selects[i]);
+    }
+}
+
+// Load terms into specific select element
+function loadTermsIntoSelect(selectId) {
+    var select = document.getElementById(selectId);
+    if (!select) return;
+    
+    makeJsonpRequest({action: 'getTerms'}, function(res) {
+        if (res.success && res.terms) {
+            // Clear existing options except the first one
+            var firstOption = select.firstElementChild;
+            select.innerHTML = '';
+            if (firstOption) {
+                select.appendChild(firstOption);
+            }
+            
+            // Add term options
+            for (var i = 0; i < res.terms.length; i++) {
+                var term = res.terms[i];
+                var option = document.createElement('option');
+                option.value = term.id;
+                option.textContent = term.name + ' (' + term.academicYear + ')';
+                select.appendChild(option);
+            }
+        }
+    });
+}
+
+// Load terms table
+function loadTermsTable() {
+    makeJsonpRequest({action: 'getTerms'}, function(res) {
+        var tbody = document.getElementById('terms-table-body');
+        tbody.innerHTML = '';
+        
+        if (res.success && res.terms && res.terms.length > 0) {
+            for (var i = 0; i < res.terms.length; i++) {
+                var term = res.terms[i];
+                var row = document.createElement('tr');
+                row.innerHTML = 
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + term.name + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + term.academicYear + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + term.startDate + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + term.endDate + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + term.status + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' +
+                        '<button onclick="editTerm(\'' + term.id + '\')" style="background: #ffc107; color: black; border: none; padding: 5px 10px; border-radius: 4px; margin: 2px;">Edit</button>' +
+                        '<button onclick="deleteTerm(\'' + term.id + '\')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin: 2px;">Delete</button>' +
+                    '</td>';
+                tbody.appendChild(row);
+            }
+        } else {
+            var row = document.createElement('tr');
+            row.innerHTML = '<td colspan="6" style="padding: 20px; text-align: center; color: #6c757d;">No terms found</td>';
+            tbody.appendChild(row);
+        }
+    });
+}
+
+// View student details
+function viewStudentDetails(studentId) {
+    makeJsonpRequest({action: 'getStudent', studentID: studentId}, function(res) {
+        if (res.success && res.student) {
+            var student = res.student;
+            alert('Student Details:\n\n' +
+                  'ID: ' + student.id + '\n' +
+                  'Name: ' + student.name + '\n' +
+                  'Class: ' + student.class + '\n' +
+                  'Gender: ' + student.gender + '\n' +
+                  'Parent: ' + student.parentName + '\n' +
+                  'Phone: ' + (student.parentPhone || 'N/A') + '\n' +
+                  'Address: ' + (student.address || 'N/A'));
+        } else {
+            alert('Error loading student details: ' + (res.message || 'Student not found'));
+        }
+    });
+}
+
+// Edit term
+function editTerm(termId) {
+    var newName = prompt('Enter new term name:');
+    if (newName) {
+        makeJsonpRequest({
+            action: 'updateTerm',
+            termId: termId,
+            name: newName
+        }, function(res) {
+            if (res.success) {
+                alert('Term updated successfully!');
+                loadTermsTable();
+                loadTermsIntoDropdowns();
+            } else {
+                alert('Error updating term: ' + (res.message || 'Unknown error'));
+            }
+        });
+    }
+}
+
+// Delete term
+function deleteTerm(termId) {
+    if (confirm('Are you sure you want to delete this term?')) {
+        makeJsonpRequest({action: 'deleteTerm', termId: termId}, function(res) {
+            if (res.success) {
+                alert('Term deleted successfully!');
+                loadTermsTable();
+                loadTermsIntoDropdowns();
+            } else {
+                alert('Error deleting term: ' + (res.message || 'Unknown error'));
+            }
+        });
+    }
+}
+
+// Handle admin form submission
+function handleAdminSubmit(e) {
+    e.preventDefault();
+    console.log('Admin form submitted');
+    
+    var formData = {
+        action: 'addAdmin',
+        email: document.getElementById('admin-email-input').value,
+        role: document.getElementById('admin-role-input').value,
+        fullName: document.getElementById('admin-fullname').value
+    };
+    
+    makeJsonpRequest(formData, function(res) {
+        var msg = document.getElementById('admin-form-message');
+        if (res.success) {
+            msg.className = 'success';
+            msg.textContent = 'Administrator added successfully!';
+            e.target.reset();
+            loadAdminsList();
+        } else {
+            msg.className = 'error';
+            msg.textContent = res.message || 'Error adding administrator';
+        }
+    });
+}
+
+// Load admins list
+function loadAdminsList() {
+    makeJsonpRequest({action: 'getAdmins'}, function(res) {
+        var tbody = document.getElementById('admins-table-body');
+        tbody.innerHTML = '';
+        
+        if (res.success && res.admins && res.admins.length > 0) {
+            for (var i = 0; i < res.admins.length; i++) {
+                var admin = res.admins[i];
+                var row = document.createElement('tr');
+                row.innerHTML = 
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + admin.email + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + (admin.fullName || '') + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + admin.role + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + (admin.status || 'active') + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' +
+                        '<button onclick="editAdmin(\'' + admin.email + '\')" style="background: #ffc107; color: black; border: none; padding: 5px 10px; border-radius: 4px; margin: 2px;">Edit</button>' +
+                        '<button onclick="deleteAdmin(\'' + admin.email + '\')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin: 2px;">Delete</button>' +
+                    '</td>';
+                tbody.appendChild(row);
+            }
+        } else {
+            var row = document.createElement('tr');
+            row.innerHTML = '<td colspan="5" style="padding: 20px; text-align: center; color: #6c757d;">No administrators found</td>';
+            tbody.appendChild(row);
+        }
+    });
+}
+
+// Edit admin
+function editAdmin(email) {
+    var newName = prompt('Enter new full name for ' + email + ':');
+    if (newName) {
+        makeJsonpRequest({
+            action: 'updateAdmin',
+            email: email,
+            fullName: newName
+        }, function(res) {
+            if (res.success) {
+                alert('Administrator updated successfully!');
+                loadAdminsList();
+            } else {
+                alert('Error updating administrator: ' + (res.message || 'Unknown error'));
+            }
+        });
+    }
+}
+
+// Delete admin
+function deleteAdmin(email) {
+    if (confirm('Are you sure you want to delete administrator: ' + email + '?')) {
+        makeJsonpRequest({action: 'deleteAdmin', email: email}, function(res) {
+            if (res.success) {
+                alert('Administrator deleted successfully!');
+                loadAdminsList();
+            } else {
+                alert('Error deleting administrator: ' + (res.message || 'Unknown error'));
+            }
+        });
+    }
+}
+
+// Handle load fee structure
+function handleLoadFeeStructure() {
+    var termId = document.getElementById('manage-fee-term').value;
+    var classValue = document.getElementById('manage-fee-class').value;
+    
+    if (!termId || !classValue) {
+        alert('Please select both term and class');
+        return;
+    }
+    
+    makeJsonpRequest({
+        action: 'getFeeStructures',
+        termId: termId
+    }, function(res) {
+        var editor = document.getElementById('fee-structure-editor');
+        var msg = document.getElementById('manage-fee-message');
+        
+        if (res.success && res.feeStructures) {
+            var feeStructure = null;
+            for (var i = 0; i < res.feeStructures.length; i++) {
+                if (res.feeStructures[i].class === classValue) {
+                    feeStructure = res.feeStructures[i];
+                    break;
+                }
+            }
+            
+            if (feeStructure) {
+                // Populate the form with existing values
+                var manageFeeInputs = document.querySelectorAll('.manage-fee-input');
+                for (var i = 0; i < manageFeeInputs.length; i++) {
+                    var input = manageFeeInputs[i];
+                    var feeName = input.getAttribute('data-fee-name');
+                    input.value = feeStructure[feeName] || 0;
+                }
+                calculateManageFeeTotal();
+                editor.style.display = 'block';
+                msg.className = 'success';
+                msg.textContent = 'Fee structure loaded successfully!';
+            } else {
+                msg.className = 'warning';
+                msg.textContent = 'No fee structure found for this class and term. Create one in the Register Fee tab first.';
+                editor.style.display = 'none';
+            }
+        } else {
+            msg.className = 'error';
+            msg.textContent = 'Error loading fee structure: ' + (res.message || 'Unknown error');
+            editor.style.display = 'none';
+        }
+    });
+}
+
+// Handle update fee structure
+function handleUpdateFeeStructure(e) {
+    e.preventDefault();
+    
+    var termId = document.getElementById('manage-fee-term').value;
+    var classValue = document.getElementById('manage-fee-class').value;
+    
+    var formData = {
+        action: 'updateFeeStructure',
+        termId: termId,
+        class: classValue,
+        total: document.getElementById('manage-fee-total').value
+    };
+    
+    // Add individual fee items
+    var manageFeeInputs = document.querySelectorAll('.manage-fee-input');
+    for (var i = 0; i < manageFeeInputs.length; i++) {
+        var input = manageFeeInputs[i];
+        var feeName = input.getAttribute('data-fee-name');
+        formData[feeName] = input.value || '0';
+    }
+    
+    makeJsonpRequest(formData, function(res) {
+        var msg = document.getElementById('manage-fee-message');
+        if (res.success) {
+            msg.className = 'success';
+            msg.textContent = 'Fee structure updated successfully!';
+        } else {
+            msg.className = 'error';
+            msg.textContent = res.message || 'Error updating fee structure';
+        }
+    });
+}
+
+// Calculate manage fee total
+function calculateManageFeeTotal() {
+    var total = 0;
+    var manageFeeInputs = document.querySelectorAll('.manage-fee-input');
+    
+    for (var i = 0; i < manageFeeInputs.length; i++) {
+        var value = parseFloat(manageFeeInputs[i].value) || 0;
+        total += value;
+    }
+    
+    var manageTotalInput = document.getElementById('manage-fee-total');
+    if (manageTotalInput) {
+        manageTotalInput.value = total;
+    }
+}
+
+// ==================== INDIVIDUAL FEE MANAGEMENT ====================
+
+// Handle individual fee form submission
+function handleIndividualFeeSubmit(e) {
+    e.preventDefault();
+    console.log('Individual fee form submitted');
+    
+    var formData = {
+        action: 'addFee',
+        feeName: document.getElementById('individual-fee-name').value,
+        feeAmount: parseFloat(document.getElementById('individual-fee-amount').value),
+        termId: document.getElementById('individual-fee-term').value,
+        class: document.getElementById('individual-fee-class').value,
+        category: document.getElementById('individual-fee-category').value
+    };
+    
+    makeJsonpRequest(formData, function(res) {
+        var msg = document.getElementById('individual-fee-message');
+        if (res.success) {
+            msg.className = 'success';
+            msg.textContent = 'Fee added successfully!';
+            e.target.reset();
+            loadIndividualFeesList();
+        } else {
+            msg.className = 'error';
+            msg.textContent = res.message || 'Error adding fee';
+        }
+    });
+}
+
+// Load individual fees list
+function loadIndividualFeesList() {
+    makeJsonpRequest({action: 'getFees'}, function(res) {
+        var tbody = document.getElementById('individual-fees-table-body');
+        tbody.innerHTML = '';
+        
+        if (res.success && res.fees && res.fees.length > 0) {
+            for (var i = 0; i < res.fees.length; i++) {
+                var fee = res.fees[i];
+                var row = document.createElement('tr');
+                row.innerHTML = 
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + fee.feeName + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">₦' + fee.feeAmount.toLocaleString() + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + (fee.termName || fee.termId) + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + fee.class + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + fee.category.toUpperCase() + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' + (fee.status || 'active') + '</td>' +
+                    '<td style="padding: 12px; border: 1px solid #dee2e6;">' +
+                        '<button onclick="editIndividualFee(\'' + fee.id + '\')" style="background: #ffc107; color: black; border: none; padding: 5px 10px; border-radius: 4px; margin: 2px;">Edit</button>' +
+                        '<button onclick="deleteIndividualFee(\'' + fee.id + '\')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin: 2px;">Delete</button>' +
+                    '</td>';
+                tbody.appendChild(row);
+            }
+        } else {
+            var row = document.createElement('tr');
+            row.innerHTML = '<td colspan="7" style="padding: 20px; text-align: center; color: #6c757d;">No fees found</td>';
+            tbody.appendChild(row);
+        }
+    });
+}
+
+// Load terms for individual fee form dropdown
+function loadTermsForIndividualFees() {
+    makeJsonpRequest({action: 'getTerms'}, function(res) {
+        var termSelect = document.getElementById('individual-fee-term');
+        if (termSelect) {
+            termSelect.innerHTML = '<option value="">-- Select Term --</option>';
+            
+            if (res.success && res.terms && res.terms.length > 0) {
+                for (var i = 0; i < res.terms.length; i++) {
+                    var term = res.terms[i];
+                    var option = document.createElement('option');
+                    option.value = term.id;
+                    option.textContent = term.name + ' (' + term.academicYear + ')';
+                    termSelect.appendChild(option);
+                }
+            }
+        }
+    });
+}
+
+// Edit individual fee function
+function editIndividualFee(feeId) {
+    // Get current fee data first
+    makeJsonpRequest({action: 'getFee', feeId: feeId}, function(res) {
+        if (res.success && res.fee) {
+            var fee = res.fee;
+            var newName = prompt('Enter new fee name:', fee.feeName);
+            if (newName && newName !== fee.feeName) {
+                var newAmount = prompt('Enter new fee amount (₦):', fee.feeAmount);
+                if (newAmount && !isNaN(parseFloat(newAmount))) {
+                    makeJsonpRequest({
+                        action: 'updateFee',
+                        feeId: feeId,
+                        feeName: newName,
+                        feeAmount: parseFloat(newAmount)
+                    }, function(updateRes) {
+                        if (updateRes.success) {
+                            alert('Fee updated successfully!');
+                            loadIndividualFeesList();
+                        } else {
+                            alert('Error updating fee: ' + (updateRes.message || 'Unknown error'));
+                        }
+                    });
+                }
+            } else if (newName) {
+                // Only name changed
+                makeJsonpRequest({
+                    action: 'updateFee',
+                    feeId: feeId,
+                    feeName: newName
+                }, function(updateRes) {
+                    if (updateRes.success) {
+                        alert('Fee name updated successfully!');
+                        loadIndividualFeesList();
+                    } else {
+                        alert('Error updating fee: ' + (updateRes.message || 'Unknown error'));
+                    }
+                });
+            }
+        } else {
+            alert('Error loading fee details: ' + (res.message || 'Unknown error'));
+        }
+    });
+}
+
+// Delete individual fee function
+function deleteIndividualFee(feeId) {
+    if (confirm('Are you sure you want to delete this fee? This action cannot be undone.')) {
+        makeJsonpRequest({action: 'deleteFee', feeId: feeId}, function(res) {
+            if (res.success) {
+                alert('Fee deleted successfully!');
+                loadIndividualFeesList();
+            } else {
+                alert('Error deleting fee: ' + (res.message || 'Unknown error'));
+            }
+        });
+    }
+}
+
+// Export individual fees data
+function exportIndividualFeesData() {
+    alert('Individual fees data export initiated. Download will start shortly.');
+}
+
+// ==================== ROLE-BASED ACCESS CONTROL ====================
+
+// Permission hierarchy: Finance Admin > Registrar > Accountant
+var rolePermissions = {
+    'finance_admin': [
+        'register-student', 'register-fee', 'record-payment',
+        'search-student', 'generate-report', 'fee-receipts', 'manage-fees'
+    ],
+    'registrar': [
+        'register-student', 'search-student', 'generate-report', 'fee-receipts'
+    ],
+    'accountant': [
+        'record-payment', 'search-student', 'generate-report', 'fee-receipts'
+    ]
+};
+
+// Check if current admin has permission for a feature
+function canAccessFeature(featureName) {
+    if (!currentAdmin || !currentAdmin.role) {
+        console.log('No current admin or role found');
+        return false;
+    }
+    
+    var userRole = currentAdmin.role;
+    var permissions = rolePermissions[userRole] || [];
+    var hasPermission = permissions.indexOf(featureName) !== -1;
+    
+    console.log('Permission check:', {
+        user: currentAdmin.email,
+        role: userRole,
+        feature: featureName,
+        hasPermission: hasPermission,
+        availablePermissions: permissions
+    });
+    
+    return hasPermission;
+}
+
+// Hide/show UI elements based on role permissions
+function applyRoleBasedUI() {
+    if (!currentAdmin) return;
+    
+    console.log('Applying role-based UI for:', currentAdmin.role);
+    
+    // Get all tabs and check permissions
+    var tabs = document.querySelectorAll('.tab[data-tab]');
+    for (var i = 0; i < tabs.length; i++) {
+        var tab = tabs[i];
+        var tabName = tab.getAttribute('data-tab');
+        
+        if (tabName && !canAccessFeature(tabName)) {
+            // Hide tab for users without permission
+            tab.style.display = 'none';
+            console.log('Hiding tab:', tabName, 'for role:', currentAdmin.role);
+        } else {
+            // Show tab for users with permission
+            tab.style.display = '';
+        }
+    }
+    
+    // Handle dropdown menus - hide entire dropdown if no child tabs are accessible
+    var dropdowns = document.querySelectorAll('.dropdown');
+    for (var i = 0; i < dropdowns.length; i++) {
+        var dropdown = dropdowns[i];
+        var dropdownTabs = dropdown.querySelectorAll('.tab[data-tab]');
+        var hasAccessibleTab = false;
+        
+        for (var j = 0; j < dropdownTabs.length; j++) {
+            var dropdownTab = dropdownTabs[j];
+            var tabName = dropdownTab.getAttribute('data-tab');
+            if (tabName && canAccessFeature(tabName)) {
+                hasAccessibleTab = true;
+                break;
+            }
+        }
+        
+        if (!hasAccessibleTab) {
+            dropdown.style.display = 'none';
+            console.log('Hiding dropdown for role:', currentAdmin.role);
+        } else {
+            dropdown.style.display = '';
+        }
+    }
+    
+    // Update role display with color coding
+    var roleDisplay = document.getElementById('admin-role-display');
+    if (roleDisplay) {
+        var roleText = currentAdmin.role.replace('_', ' ').toUpperCase();
+        var roleColor = getRoleColor(currentAdmin.role);
+        roleDisplay.innerHTML = '<span style="color: ' + roleColor + '; font-weight: bold;">' + roleText + '</span>';
+    }
+}
+
+// Get color for role display
+function getRoleColor(role) {
+    var colors = {
+        'finance_admin': '#fd7e14',    // Orange - financial authority
+        'registrar': '#6f42c1',       // Purple - student management
+        'accountant': '#20c997'       // Teal - payment processing
+    };
+    return colors[role] || '#6c757d';
+}
+
+// Show permission denied message
+function showPermissionDenied(featureName) {
+    var roleText = currentAdmin ? currentAdmin.role.replace('_', ' ').toUpperCase() : 'UNKNOWN';
+    var message = 'Access Denied!\n\n' +
+                  'Feature: ' + featureName.replace('-', ' ').toUpperCase() + '\n' +
+                  'Your Role: ' + roleText + '\n\n' +
+                  'Contact your Super Administrator to request access to this feature.';
+    alert(message);
+}
+
+console.log('School Accounting System JavaScript loaded successfully');
+</script>
+
+<div style="text-align: center; padding: 20px 0 0; font-style: italic; color: #888;">
+    Powered by BerachahGlobalConcept
+</div>
+
+</body>
+</html>
